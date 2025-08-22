@@ -6,7 +6,11 @@ services:
     branch: development
     buildCommand: npm install
     startCommand: npm start
-    envVars: []
+    envVars:
+      - key: RAILPACK_NODE_VERSION
+        value: "22"
+      - key: RAILPACK_NO_SPA
+        value: "1"
 
 # Note: Put real secret environment variables in the Render dashboard or use
 # Render's secret files. Do NOT commit secrets in this repo.
