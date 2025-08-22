@@ -24,7 +24,7 @@ app.use(function (err, req, res, next) {
   next();
 });
 
-const PORT = 3500;
+const PORT = process.env.PORT || 3500;
 
 app.get('/', (req, res) => {
   res.send('hello geeks');
@@ -55,6 +55,6 @@ mongoose.connection.once('open', () => {
   console.log('connected to Db');
 });
 
-app.listen(process.env.PORT || PORT, () => {
-  console.log('Server is UP and running');
+app.listen(PORT, () => {
+  console.log('Server is UP and running on port', PORT);
 });
