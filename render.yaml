@@ -1,16 +1,12 @@
-service:
-  name: arnav-travels-backend
-  env: node
-  branch: development
-  plan: free
-  buildCommand: npm install
-  startCommand: npm start
+services:
+  - type: web
+    name: arnav-travels-backend
+    env: node
+    plan: free
+    branch: development
+    buildCommand: npm install
+    startCommand: npm start
+    envVars: []
 
-# Optional: add environment variables in the Render dashboard instead of committing them here.
-# envVars:
-#   - key: DATABASE_URL
-#     value: <your-mongo-connection-string>
-#   - key: ACCESS_TOKEN
-#     value: <your-jwt-secret>
-#   - key: PASSWORD_SECRET_KEY
-#     value: <your-aes-secret>
+# Note: Put real secret environment variables in the Render dashboard or use
+# Render's secret files. Do NOT commit secrets in this repo.
