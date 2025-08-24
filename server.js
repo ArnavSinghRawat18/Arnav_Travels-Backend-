@@ -10,10 +10,16 @@ const connectDB = require('./config/dbconfig.js');
 const wishlistRouter=require("./routes/wishlist.router.js"); // Import the wishlist route
 // category routes removed per request
 
+const helmet = require('helmet');
+const cors = require('cors');
 const app = express();
 
 // parse JSON bodies
 app.use(express.json());
+
+// security middleware
+app.use(helmet());
+app.use(cors());
 
 // handle invalid JSON errors from body-parser/express.json
 app.use(function (err, req, res, next) {
@@ -29,6 +35,7 @@ const PORT = process.env.PORT || 3500;
 app.get('/', (req, res) => {
   res.send('hello geeks');
 });
+app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 app.use("/api/hoteldata", hotelDataAddedToDBRouter);
 app.use("/api/categorydata", categoryDataAddedToDBRouter);
 app.use("/api/hotels", hotelRouter);
@@ -37,7 +44,7 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/hotels", singleHotelRouter); // Use the single hotel route
 app.use("/api/auth", authRouter); // Use the auth route
-// app.use("/api/wishlist", wishlistRouter); // Use the wishlist route
+app.use("/api/wishlist", wishlistRouter); // Use the wishlist route
 // Also accept wishlist requests under the auth prefix for clients hitting /api/auth/wishlist
 // app.use("/api/auth/wishlist", wishlistRouter);
 
@@ -55,6 +62,19 @@ mongoose.connection.once('open', () => {
   console.log('connected to Db');
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log('Server is UP and running on port', PORT);
 });
+
+function gracefulShutdown() {
+  console.log('Graceful shutdown initiated');
+  server.close(() => {
+    mongoose.connection.close(false, () => {
+      console.log('Mongo connection closed.');
+      process.exit(0);
+    });
+  });
+}
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
