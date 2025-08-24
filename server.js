@@ -21,6 +21,16 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors());
 
+// global DB availability flag for requests
+app.use((req, res, next) => {
+  try {
+    req.dbConnected = mongoose && mongoose.connection && mongoose.connection.readyState === 1;
+  } catch (_) {
+    req.dbConnected = false;
+  }
+  next();
+});
+
 // handle invalid JSON errors from body-parser/express.json
 app.use(function (err, req, res, next) {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {

@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const Category = require("../model/category.model");
+const requireDb = require('../utils/dbCheck.js');
 
 router.route("/")
     .get(async (req, res) => {
+        if (!req.dbConnected) return res.status(503).json({ message: 'Service temporarily unavailable - database not connected' });
         try {
             const categories = await Category.find({});
             res.json(categories);
