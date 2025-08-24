@@ -65,3 +65,31 @@ Run them only locally and after taking a DB backup.
 
 If you want, I can: add the JWT middleware, wire it into wishlist routes, and create a short test script to exercise register/login and wishlist flows.
 # Arnav_Travels-Backend-
+
+# MongoDB connection (Atlas example) — replace the placeholders
+DATABASE_URL=mongodb+srv://<DB_USER>:<DB_PASS>@cluster0.mongodb.net/<DB_NAME>?retryWrites=true&w=majority
+
+# JWT secret used by jsonwebtoken
+ACCESS_TOKEN=replace_with_a_long_random_string_for_jwt_signing
+
+# AES key used by CryptoJS.AES
+PASSWORD_SECRET_KEY=replace_with_a_long_random_string_for_aes
+
+# Node environment
+NODE_ENV=production
+
+service:
+  name: arnav-travels-backend
+  env: node
+  branch: development
+  plan: free
+  buildCommand: npm install
+  startCommand: npm start
+
+# Note: set real secrets in Render dashboard, not here.
+
+// config check — require JWT secret in production
+if (process.env.NODE_ENV === 'production' && !process.env.ACCESS_TOKEN) {
+  console.error('ERROR: ACCESS_TOKEN environment variable is required in production.');
+  process.exit(1);
+}

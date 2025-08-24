@@ -26,10 +26,10 @@ router.post('/register', async (req, res) => {
       password: hashed,
     });
     const savedUser = await newUser.save();
-    const payload = { id: savedUser._id.toString(), username: savedUser.username, number: savedUser.number };
+  const payload = { id: savedUser._id.toString(), username: savedUser.username, number: savedUser.number };
   const secret = process.env.ACCESS_TOKEN;
-  if (!secret) throw new Error('ACCESS_TOKEN is not configured');
-    const accessToken = jwt.sign(payload, secret, { expiresIn: '1d' });
+  if (!secret) return res.status(500).json({ message: 'ACCESS_TOKEN is not configured' });
+  const accessToken = jwt.sign(payload, secret, { expiresIn: '1d' });
     const userObj = savedUser.toObject();
     delete userObj.password;
     return res.status(201).json({ ...userObj, accessToken });
@@ -71,10 +71,10 @@ router.post('/login', async (req, res) => {
       }
     }
     if (!passwordMatches) return res.status(401).json({ message: 'Invalid credentials' });
-    const payload = { id: user._id.toString(), username: user.username, number: user.number };
+  const payload = { id: user._id.toString(), username: user.username, number: user.number };
   const secret = process.env.ACCESS_TOKEN;
-  if (!secret) throw new Error('ACCESS_TOKEN is not configured');
-    const accessToken = jwt.sign(payload, secret, { expiresIn: '1d' });
+  if (!secret) return res.status(500).json({ message: 'ACCESS_TOKEN is not configured' });
+  const accessToken = jwt.sign(payload, secret, { expiresIn: '1d' });
     const userObj = user.toObject();
     delete userObj.password;
     return res.json({ ...userObj, accessToken });
@@ -121,4 +121,5 @@ router.delete('/wishlist/:id', requireAuth, async (req, res) => {
   }
 });
 
+// Note: wishlist endpoints were moved to routes/wishlist.router.js to avoid duplication
 module.exports = router;
