@@ -1055,4 +1055,62 @@ const hotels = {
     ]
 }
 
+// Auto-fill generator: ensure each category has at least `MIN_PER_CATEGORY` entries.
+// This keeps the source file compact while providing synthetic sample data for UI testing.
+(function ensureCategoryCounts() {
+    const MIN_PER_CATEGORY = 25;
+    const categoriesToCities = {
+        "Tiny Homes": ["Calangute", "Arambol", "Palolem", "Vagator", "Assagao"],
+        "City": ["Mumbai", "New Delhi", "Bengaluru", "Kolkata", "Chennai", "Pune"],
+        "Beach": ["Calangute", "Baga", "Varkala", "Cherai", "Marari", "Colva"],
+        "Heritage": ["Old Delhi", "Jaipur", "Udaipur", "Kolkata", "Pondicherry"]
+    };
+
+    // count existing
+    const counts = {};
+    hotels.data.forEach(h => {
+        counts[h.category] = (counts[h.category] || 0) + 1;
+    });
+
+    function createSample(category, idx) {
+        const cities = categoriesToCities[category] || ["Unknown"];
+        const city = cities[idx % cities.length];
+        const state = category === 'Beach' || category === 'Tiny Homes' ? 'Goa' : (category === 'Heritage' ? 'Rajasthan' : 'Maharashtra');
+        const priceBase = { 'Tiny Homes': 2500, 'City': 3500, 'Beach': 4000, 'Heritage': 3000 };
+
+        return {
+            id: uuid(),
+            name: `${category} Sample ${idx + 1}`,
+            category: category,
+            image: "https://images.unsplash.com/photo-1505691723518-36a56c8f9d8b?auto=format&fit=crop&w=1200&q=80",
+            imageArr: ["https://images.unsplash.com/photo-1505691723518-36a56c8f9d8b?auto=format&fit=crop&w=720&q=60"],
+            address: city,
+            city: city,
+            state: state,
+            country: "India",
+            price: (priceBase[category] || 2000) + (idx * 10),
+            rating: 4.2,
+            numberOfBathrooms: 1,
+            numberOfBeds: 1,
+            numberOfguest: 2,
+            numberOfBedrooms: 1,
+            numberOfStudies: 0,
+            hostName: "AutoSeed",
+            hostJoinedOn: "August 2025",
+            ameneties: ["Wifi", "Breakfast"],
+            healthAndSafety: ["Smoke alarm"],
+            houseRules: ["Check-in after 2:00 pm", "Check out 11:00 am"],
+            propertyType: "Hotel",
+            isCancelable: true,
+        };
+    }
+
+    Object.keys(categoriesToCities).forEach(category => {
+        const have = counts[category] || 0;
+        for (let i = have; i < MIN_PER_CATEGORY; i++) {
+            hotels.data.push(createSample(category, i));
+        }
+    });
+})();
+
 module.exports = hotels;
