@@ -1664,12 +1664,15 @@ const hotels = {
             for (const cat of categoriesList) {
                 const have = counts[cat] || 0;
                 for (let i = have + 1; i <= MIN_PER_CATEGORY; i++) {
+                    // deterministic seed per category+index so picsum returns stable images
+                    const seed = (cat.replace(/\s+/g, '') + '_' + i).toLowerCase();
                     const generated = {
                         id: uuid(),
                         name: `${cat} Manual ${i}`,
                         category: cat,
-                        image: "https://images.unsplash.com/photo-1505691723518-36a56c8f9d8b?auto=format&fit=crop&w=1200&q=80",
-                        imageArr: ["https://images.unsplash.com/photo-1505691723518-36a56c8f9d8b?auto=format&fit=crop&w=720&q=60"],
+                        // use picsum.photos seeded images which are reliable and accessible
+                        image: `https://picsum.photos/seed/${seed}/1200/800`,
+                        imageArr: [`https://picsum.photos/seed/${seed}/720/480`],
                         address: `${cat} Road ${i}`,
                         city: `${cat} City`,
                         state: "State",
