@@ -6,9 +6,11 @@ const requireDb = require('../utils/dbCheck.js');
 
 router.route("/") // localhost:3500/api/hotels
   .get(async (req, res) => {
-  if (!req.dbConnected) return res.status(503).json({ message: 'Service temporarily unavailable - database not connected' });
     const hotelCategory = req.query.category; // e.g. /api/hotels?category=National+Park
     try {
+      // Enforce DB-only behavior: if DB isn't connected return 503 so the frontend uses live DB data.
+      if (!req.dbConnected) return res.status(503).json({ message: 'Service temporarily unavailable - database not connected' });
+
       let hotels;
       if (hotelCategory) {
         hotels = await Hotel.find({ category: hotelCategory });
